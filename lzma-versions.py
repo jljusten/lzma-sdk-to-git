@@ -3,6 +3,14 @@
 # lzma-versions.py -- LZMA SDK release git import script
 # 2012 - 2015 : Jordan Justen : Public domain
 
+# Usage:
+# * Download .zip, .tar.bz2, .7z releases from 7-zip website
+# * Update knownSdkDates in this script if needed
+# * Run ./lzma-versions.py
+#
+# Output:
+# * A git repo under the lzma-sdk.git sub-directory
+
 import hashlib
 import libarchive
 import os
