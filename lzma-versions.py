@@ -30,7 +30,7 @@ lzmaArcRe = re.compile(
     '''
         ^
         lzma
-        (\d{3})
+        (\d{3,})
         \.
         (?: zip | tar\.bz2 | 7z )
         $
@@ -48,8 +48,7 @@ archives = map(
     archives
     )
 archives = dict(archives)
-versions = archives.keys()
-versions.sort()
+versions = sorted(archives.keys(), key=lambda k: float(k))
 
 class Archive:
     def __init__(self, archive):
@@ -90,9 +89,6 @@ def CheckArchives():
     
         for m in members:
             assert not m.startswith('/')
-
-versions = archives.keys()
-versions.sort()
 
 def ExtractArchives():
     if os.path.exists(edst):
