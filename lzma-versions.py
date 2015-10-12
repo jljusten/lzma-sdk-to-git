@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 
 import hashlib
+import libarchive
 import os
 import re
 import shutil
@@ -30,7 +32,7 @@ lzmaArcRe = re.compile(
         lzma
         (\d{3})
         \.
-        (?: zip | tar\.bz2 )
+        (?: zip | tar\.bz2 | 7z )
         $
     ''',
     re.VERBOSE
@@ -49,15 +51,26 @@ archives = dict(archives)
 versions = archives.keys()
 versions.sort()
 
-def OpenArchive(archive):
-    if archive.endswith('.zip'):
-        assert zipfile.is_zipfile(archive)
-        zf = zipfile.ZipFile(archive, 'r')
-        return zf
-    else:
-        assert tarfile.is_tarfile(archive)
-        tf = tarfile.open(archive, 'r')
-        return tf
+class Archive:
+    def __init__(self, archive):
+        self.archive = archive
+
+    def extractall(self, dst):
+        if self.archive.endswith('.zip'):
+            assert zipfile.is_zipfile(self.archive)
+            zf = zipfile.ZipFile(self.archive, 'r')
+            zf.extractall(dst)
+        elif self.archive.endswith('.tar.bz2'):
+            assert tarfile.is_tarfile(self.archive)
+            tf = tarfile.open(self.archive, 'r')
+            tf.extractall(dst)
+        else:
+            self.archive.endswith('.7z')
+            savedir = os.getcwd()
+            os.makedirs(dst)
+            os.chdir(dst)
+            libarchive.extract_file(self.archive)
+            os.chdir(savedir)
 
 def CheckArchives():
     for version in versions:
@@ -88,7 +101,7 @@ def ExtractArchives():
     for version in versions:
         dst = os.path.join(edst, version)
         src = os.path.join(os.getcwd(), archives[version])
-        arc = OpenArchive(src)
+        arc = Archive(src)
         print 'Extracting %s ...' % version,
         arc.extractall(dst)
         print
