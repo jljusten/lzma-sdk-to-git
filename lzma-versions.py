@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# lzma-versions.py -- LZMA SDK release git import script
+# 2012 - 2015 : Jordan Justen : Public domain
+
 import hashlib
 import libarchive
 import os
