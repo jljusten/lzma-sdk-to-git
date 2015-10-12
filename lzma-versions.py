@@ -143,7 +143,9 @@ def ReadHistory(version):
     assert version not in histories
     dst = os.path.join(edst, version)
     chlog = os.path.join(dst, 'history.txt')
-    if not os.path.exists(chlog): return
+    if not os.path.exists(chlog):
+        chlog = os.path.join(dst, 'DOC', 'lzma-history.txt')
+        if not os.path.exists(chlog): return
     f = open(chlog)
     history = f.readlines()
     f.close()
