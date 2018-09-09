@@ -64,6 +64,8 @@ versions = sorted(archives.keys(), key=lambda k: float(k))
 
 def ReadCmdLineArgs():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--extract-all", action="store_true",
+                    help="Re-extract all archives")
     global args
     args = ap.parse_args()
 
@@ -108,11 +110,14 @@ def CheckArchives():
             assert not m.startswith('/')
 
 def ExtractArchives():
-    if os.path.exists(edst):
+    if args.extract_all and os.path.exists(edst):
         shutil.rmtree(edst)
-    os.makedirs(edst)
+    if not os.path.exists(edst):
+        os.makedirs(edst)
     for version in versions:
         dst = os.path.join(edst, version)
+        if os.path.exists(dst):
+            continue
         src = os.path.join(os.getcwd(), archives[version])
         arc = Archive(src)
         print('Extracting {} ...'.format(version), end='', flush=True)
