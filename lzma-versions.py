@@ -408,12 +408,8 @@ def PrintSdkVersions():
 
 def UpdateRepository():
     InitializeRepository()
-    #AddSdkVersions()
     ReadTags()
     AddSdkVersions()
-    #AddVersionToRepository(versions[0])
-    #AddVersionToRepository(versions[1])
-    #AddVersionToRepository(versions[2])
 
 ReadCmdLineArgs()
 ExtractArchives()
