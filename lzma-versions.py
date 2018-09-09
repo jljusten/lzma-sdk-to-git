@@ -300,7 +300,11 @@ def RunGitCommandInRepostitory(cmd, addToEnv=None):
     else:
         env = None
 
-    p = Popen(cmd, executable=gitBin, cwd=repodir, env=env)
+    output = PIPE
+    if args.verbose:
+        output = None
+    p = Popen(cmd, executable=gitBin, cwd=repodir, env=env, stdout=output,
+              stderr=output)
     return p.wait()
 
 def InitializeRepository():
