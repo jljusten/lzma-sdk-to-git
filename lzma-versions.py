@@ -414,7 +414,8 @@ def UpdateRepository():
 ReadCmdLineArgs()
 ExtractArchives()
 ReadHistories()
-#PrintSdkVersions()
+if args.verbose:
+    PrintSdkVersions()
 UpdateRepository()
 if not repo_changed:
     print('No new versions were found')
