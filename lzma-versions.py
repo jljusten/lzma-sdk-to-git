@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # lzma-versions.py -- LZMA SDK release git import script
 # 2012 - 2015 : Jordan Justen : Public domain
@@ -28,10 +28,10 @@ edst = os.path.join(basedir, 'extracted')
 repodir = os.path.join(basedir, 'lzma-sdk.git')
 commitMsgFile = os.path.join(basedir, 'git-commit-log')
 gitBin = os.path.join(
-    filter(
+    next(filter(
         lambda p: os.path.exists(os.path.join(p, 'git')),
         os.environ['PATH'].split(os.pathsep)
-        )[0],
+        )),
     'git'
     )
 
@@ -85,19 +85,19 @@ class Archive:
 def CheckArchives():
     for version in versions:
         archive = archives[version]
-        print archive + ':'
+        print(archive + ':')
         dst = os.path.join('extract', version)
         if archive.endswith('.zip'):
             assert zipfile.is_zipfile(archive)
             zf = zipfile.ZipFile(archive, 'r')
             members = zf.namelist()
-            print members
+            print(members)
         else:
             assert tarfile.is_tarfile(archive)
             tf = tarfile.open(archive, 'r')
             members = tf.getnames()
-            print members
-    
+            print(members)
+
         for m in members:
             assert not m.startswith('/')
 
@@ -109,9 +109,9 @@ def ExtractArchives():
         dst = os.path.join(edst, version)
         src = os.path.join(os.getcwd(), archives[version])
         arc = Archive(src)
-        print 'Extracting %s ...' % version,
+        print('Extracting {} ...'.format(version), end='', flush=True)
         arc.extractall(dst)
-        print
+        print()
 
 histories = {}
 
@@ -153,7 +153,7 @@ def ReadHistory(version):
     if not os.path.exists(chlog):
         chlog = os.path.join(dst, 'DOC', 'lzma-history.txt')
         if not os.path.exists(chlog): return
-    f = open(chlog)
+    f = open(chlog, encoding='iso-8859-1')
     history = f.readlines()
     f.close()
     history = map(lambda s: s.rstrip(), history)
@@ -180,7 +180,7 @@ def ReadHistory(version):
             historyVersion = mo.group(1)
             historyDate = mo.group(2)
             if historyVersion not in versions:
-                print 'Need', historyVersion
+                print('Need', historyVersion)
                 assert historyVersion in versions
             versionLog = [line]
         else:
@@ -268,14 +268,15 @@ def ReadHistories():
 
 def RunGitCommandInRepostitoryWithOutput(cmd):
     if type(cmd) == str: cmd = cmd.split()
-    print 'Running:', ' '.join(cmd)
-    p = Popen(cmd, executable=gitBin, cwd=repodir, stdout=PIPE)
+    print('Running:', ' '.join(cmd))
+    p = Popen(cmd, executable=gitBin, cwd=repodir, stdout=PIPE,
+              encoding='utf-8')
     r = p.wait()
     return p.stdout.readlines()
 
 def RunGitCommandInRepostitory(cmd, addToEnv=None):
     if type(cmd) == str: cmd = cmd.split()
-    print 'Running:', ' '.join(cmd)
+    print('Running:', ' '.join(cmd))
 
     if addToEnv is not None:
         env = os.environ.copy()
@@ -297,7 +298,7 @@ def InitializeRepository():
 def ReadTags():
     global tags
     output = RunGitCommandInRepostitoryWithOutput('git tag')
-    tags = map(lambda s: s.strip(), output)
+    tags = set(map(lambda s: s.strip(), output))
 
 def CopyVersionToRepository(version):
     for item in os.listdir(repodir):
@@ -317,14 +318,14 @@ def AddVersionToRepository(version):
     global tags
 
     if version in tags:
-        print version, 'is already in repository'
+        print(version, 'is already in repository')
         return
 
     CopyVersionToRepository(version)
 
     r = RunGitCommandInRepostitory('git add --all')
     assert r == 0
-    f = open(commitMsgFile, 'w')
+    f = open(commitMsgFile, 'w', encoding='utf-8')
     f.write(GetChangelog(version))
     f.close()
 
@@ -361,8 +362,8 @@ def AddSdkVersions():
 
 def PrintSdkVersions():
     for version in versions:
-        print version 
-        print GetChangelog(version)
+        print(version)
+        print(GetChangelog(version))
 
 def UpdateRepository():
     InitializeRepository()
@@ -377,4 +378,3 @@ ExtractArchives()
 ReadHistories()
 #PrintSdkVersions()
 UpdateRepository()
-
