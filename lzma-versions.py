@@ -66,6 +66,8 @@ def ReadCmdLineArgs():
     ap = argparse.ArgumentParser()
     ap.add_argument("--extract-all", action="store_true",
                     help="Re-extract all archives")
+    ap.add_argument("-v", "--verbose", action="store_true",
+                    help="Print verbose messages")
     global args
     args = ap.parse_args()
 
@@ -279,7 +281,8 @@ def ReadHistories():
 
 def RunGitCommandInRepostitoryWithOutput(cmd):
     if type(cmd) == str: cmd = cmd.split()
-    print('Running:', ' '.join(cmd))
+    if args.verbose:
+        print('Running:', ' '.join(cmd))
     p = Popen(cmd, executable=gitBin, cwd=repodir, stdout=PIPE,
               encoding='utf-8')
     r = p.wait()
@@ -287,7 +290,8 @@ def RunGitCommandInRepostitoryWithOutput(cmd):
 
 def RunGitCommandInRepostitory(cmd, addToEnv=None):
     if type(cmd) == str: cmd = cmd.split()
-    print('Running:', ' '.join(cmd))
+    if args.verbose:
+        print('Running:', ' '.join(cmd))
 
     if addToEnv is not None:
         env = os.environ.copy()
@@ -329,7 +333,8 @@ def AddVersionToRepository(version):
     global tags
 
     if version in tags:
-        print(version, 'is already in repository')
+        if args.verbose:
+            print(version, 'is already in repository')
         return
 
     CopyVersionToRepository(version)
