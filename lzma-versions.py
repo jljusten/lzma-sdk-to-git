@@ -239,6 +239,9 @@ def GetChangelog(version):
     f.close()
     if version in histories[versions[-1]]:
         cl += histories[versions[-1]][version]['log']
+        # Get changelogs work better with a subject followed by a blank line
+        if len(cl) > 1 and cl[1].strip() != '':
+            cl.insert(1, '')
     else:
         date = GetDateForVersion(version)
         if date is not None:
