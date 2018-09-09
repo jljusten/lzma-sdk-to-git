@@ -35,6 +35,7 @@ gitBin = os.path.join(
         )),
     'git'
     )
+repo_changed = False
 
 files = os.listdir('.')
 
@@ -337,6 +338,9 @@ def AddVersionToRepository(version):
             print(version, 'is already in repository')
         return
 
+    global repo_changed
+    repo_changed = True
+
     CopyVersionToRepository(version)
 
     r = RunGitCommandInRepostitory('git add --all')
@@ -373,8 +377,9 @@ def AddSdkVersions():
     for version in versions:
         AddVersionToRepository(version)
 
-    r = RunGitCommandInRepostitory('git gc')
-    assert r == 0
+    if repo_changed:
+        r = RunGitCommandInRepostitory('git gc')
+        assert r == 0
 
 def PrintSdkVersions():
     for version in versions:
@@ -395,3 +400,5 @@ ExtractArchives()
 ReadHistories()
 #PrintSdkVersions()
 UpdateRepository()
+if not repo_changed:
+    print('No new versions were found')
