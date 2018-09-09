@@ -377,6 +377,8 @@ def AddVersionToRepository(version):
         )
     assert r == 0
 
+    print(version, 'was added to the repository')
+
 def AddSdkVersions():
     for version in versions:
         AddVersionToRepository(version)
