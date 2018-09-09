@@ -282,6 +282,11 @@ def ReadHistories():
     for version in versions:
         ReadHistory(version)
     CheckForHistoryInconsistencies()
+    for version in versions:
+        date = GetDateForVersion(version)
+        if date is None:
+            print('No date found for version {}!'.format(version))
+        assert date is not None
 
 def RunGitCommandInRepostitoryWithOutput(cmd):
     if type(cmd) == str: cmd = cmd.split()
