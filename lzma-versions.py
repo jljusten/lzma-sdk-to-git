@@ -223,10 +223,10 @@ knownSdkDates = {
     '15.08': '2015-10-05',
     }
 def GetDateForVersion(version):
-    if version in histories[versions[-1]]:
-        return histories[versions[-1]][version]['date']
     if version in knownSdkDates:
         return knownSdkDates[version]
+    if version in histories[versions[-1]]:
+        return histories[versions[-1]][version]['date']
     return None
 
 def GetChangelog(version):
