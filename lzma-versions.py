@@ -11,6 +11,7 @@
 # Output:
 # * A git repo under the lzma-sdk.git sub-directory
 
+import argparse
 import hashlib
 import libarchive
 import os
@@ -60,6 +61,11 @@ archives = map(
     )
 archives = dict(archives)
 versions = sorted(archives.keys(), key=lambda k: float(k))
+
+def ReadCmdLineArgs():
+    ap = argparse.ArgumentParser()
+    global args
+    args = ap.parse_args()
 
 class Archive:
     def __init__(self, archive):
@@ -374,6 +380,7 @@ def UpdateRepository():
     #AddVersionToRepository(versions[1])
     #AddVersionToRepository(versions[2])
 
+ReadCmdLineArgs()
 ExtractArchives()
 ReadHistories()
 #PrintSdkVersions()
